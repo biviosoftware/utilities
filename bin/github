@@ -112,17 +112,20 @@ class _Backup(object):
                 f.write("]")
             _shell(["xz", base])
 
-        _clone(".git")
-        if repo.has_wiki:
-            try:
-                _clone(".wiki.git")
-            except subprocess.CalledProcessError as e:
-                if not re.search(_WIKI_ERROR_OK, str(e.output)):
-                    raise
-                
-        if repo.has_issues:
-            _json(repo.iter_issues(state="all"), ".issues")
-        _json(repo.iter_comments(), ".comments")
+        try:
+            _clone(".git")
+            if repo.has_wiki:
+                try:
+                    _clone(".wiki.git")
+                except subprocess.CalledProcessError as e:
+                    if not re.search(_WIKI_ERROR_OK, str(e.output)):
+                        raise
+
+            if repo.has_issues:
+                _json(repo.iter_issues(state="all"), ".issues")
+            _json(repo.iter_comments(), ".comments")
+        except:
+            sys.print_exc()
 
 def _shell(cmd):
     subprocess.check_output(cmd, stderr=subprocess.STDOUT)
