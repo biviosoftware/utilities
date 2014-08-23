@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+# -*-python-*-
 from __future__ import print_function
 import datetime
 import github3
@@ -8,14 +10,40 @@ import os.path
 import re
 import subprocess
 import sys
+import argh
 
+_BACKUP_DIR = "~/bkp"
 _GITHUB_HOST = 'github.com'
 _GITHUB_URI = 'https://' + _GITHUB_HOST
 _GITHUB_API = 'https://api.' + _GITHUB_HOST
-_PURGE_DELTA = datetime.timedelta(days=3)
+_PURGE_DELTA = datetime.timedelta(days=2)
 _WIKI_ERROR_OK = r'fatal: remote error: access denied or repository not exported: .*wiki.git'
 
-class _Internal(object):
+def restore(git_txz : 'git.txz file'):
+    'Restores the git directory (only) to a new directory with the .git.txz suffix'
+    m = re.search('(([^/]+)\.git)\.txz$', git_txz)
+    if not m:
+        raise ValueError(git_txz, ': does not end in .git.txz')
+    d = m.group(2)
+    g = m.group(1)
+    os.mkdir(d)
+    os.chdir(d)
+    _shell(['tar', 'xJf', git_txz])
+    os.rename(g, '.git')
+    _shell(['git', 'config', 'core.bare', 'false'])
+    _shell(['git', 'config', 'core.logallrefupdates', 'true'])
+    _shell(['git', 'checkout'])
+    print(d, ': restored')
+
+def backup():
+    'Backs up all github repositories associated with user'
+    try:
+        _Backup()
+    except subprocess.CalledProcessError as e:
+        if hasattr(e, 'output'):
+            print(str(e.output), file=sys.stderr)
+
+class _Backup(object):
     def __init__(self):
         self._chdir()
         self._login()
@@ -27,8 +55,10 @@ class _Internal(object):
             for r in o.iter_repos(type="all"):
                 self._repo(r)
 
+        self._purge()
+
     def _chdir(self):
-        self._root = os.path.expanduser("~/backup-github")
+        self._root = os.path.expanduser(_BACKUP_DIR)
         d = os.path.join(
             self._root,
             datetime.datetime.now().strftime("%Y%m%d%H%M%S"))
@@ -37,6 +67,7 @@ class _Internal(object):
         except:
             pass
         os.chdir(d)
+        print("directory: " + d)
         self._dir = d
     
     def _login(self):
@@ -51,10 +82,13 @@ class _Internal(object):
         for d in glob.glob(os.path.join(self._root, g)):
             t = datetime.datetime.utcfromtimestamp(os.stat(d).st_mtime)
             if t < expires:
-                self._shell(["rm", "-rf", d])
+                _shell(["rm", "-rf", d])
 
     def _repo(self, repo):
         fn = repo.full_name
+        if not re.search('re/util', fn):
+            return
+        print("backup: " + fn)
         bd = re.sub("/", "-", fn)
 
         def _clone(suffix):
@@ -65,7 +99,7 @@ class _Internal(object):
                         base],
                 ["tar", "cJf", base + ".txz", base],
                 ["rm", "-rf", base]]:
-                self._shell(cmd)
+                _shell(cmd)
 
         def _json(gen, suffix):
             base = bd + suffix
@@ -76,21 +110,23 @@ class _Internal(object):
                     f.write(i.to_json())
                     sep = ","
                 f.write("]")
-            self._shell(["xz", base])
+            _shell(["xz", base])
 
         _clone(".git")
         if repo.has_wiki:
-            _clone(".wiki.git")
+            try:
+                _clone(".wiki.git")
+            except subprocess.CalledProcessError as e:
+                if not re.search(_WIKI_ERROR_OK, str(e.output)):
+                    raise
+                
         if repo.has_issues:
             _json(repo.iter_issues(state="all"), ".issues")
         _json(repo.iter_comments(), ".comments")
 
-    def _shell(self, cmd):
-        try:
-            subprocess.check_output(cmd, stderr=subprocess.STDOUT)
-        except subprocess.CalledProcessError as e:
-            if not re.search(_WIKI_ERROR_OK, str(e.output)):
-                print(e.output, file=sys.stderr)
-                raise
+def _shell(cmd):
+    subprocess.check_output(cmd, stderr=subprocess.STDOUT)
 
-_Internal()
+if __name__ == '__main__':
+    argh.dispatch_commands([backup, restore])
+    

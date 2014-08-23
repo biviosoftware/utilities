@@ -1,0 +1,5 @@
+argh>=0.25.0
+github3.py>=0.9.1
+requests>=2.3.0
+uritemplate.py>=0.3.0
+yolk>=0.4.3
