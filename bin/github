@@ -86,8 +86,8 @@ class _Backup(object):
 
     def _repo(self, repo):
         fn = repo.full_name
-        if not re.search('re/util', fn):
-            return
+        #if not re.search('re/util', fn):
+        #    return
         print("backup: " + fn)
         bd = re.sub("/", "-", fn)
 
