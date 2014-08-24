@@ -4,22 +4,6 @@ function reset_ps1 {
 }
 expr "x$PS1" : 'x\[' > /dev/null && reset_ps1
 
-CVSROOT=:pserver:nagler@localhost:/home/cvs
-
-# User specific aliases and functions
-alias "rm~=find . -name '*~' -exec rm {} ';'"
-alias a3="ssh a3"
-
-function gcl {
-    local r=$1
-    expr "$r" : '.*/' >/dev/null || r=$(basename $(pwd))/$r
-    git clone "https://github.com/$r"
-}
-
-alias gup='git fetch && git checkout'
-alias gpu='git push origin master'
-alias gco='git commit -am'
-
 test "$VIRTUAL_ENV" && {
     type workon >/dev/null 2>&1 || {
         unset VIRTUAL_ENV
