@@ -1,16 +1,18 @@
 #!/usr/bin/env python
 # -*-python-*-
 from __future__ import print_function
+import argh
 import datetime
 import github3
 import glob
+import json
 import netrc
 import os
 import os.path
 import re
 import subprocess
 import sys
-import argh
+import traceback
 
 _BACKUP_DIR = "~/bkp"
 _GITHUB_HOST = 'github.com'
@@ -25,6 +27,7 @@ def restore(git_txz : 'git.txz file'):
     if not m:
         raise ValueError(git_txz, ': does not end in .git.txz')
     d = m.group(2)
+    print('restore: ' + d)
     g = m.group(1)
     os.mkdir(d)
     os.chdir(d)
@@ -33,7 +36,6 @@ def restore(git_txz : 'git.txz file'):
     _shell(['git', 'config', 'core.bare', 'false'])
     _shell(['git', 'config', 'core.logallrefupdates', 'true'])
     _shell(['git', 'checkout'])
-    print(d, ': restored')
 
 def backup():
     'Backs up all github repositories associated with user'
@@ -47,6 +49,11 @@ class _Backup(object):
     def __init__(self):
         self._chdir()
         self._login()
+
+        #TEST
+        if False:
+            self._repo(self._github.repository('biviosoftware', 'utilities'))
+            return
 
         for r in self._github.iter_repos(type="all"):
             self._repo(r)
@@ -86,8 +93,7 @@ class _Backup(object):
 
     def _repo(self, repo):
         fn = repo.full_name
-        #if not re.search('re/util', fn):
-        #    return
+
         print("backup: " + fn)
         bd = re.sub("/", "-", fn)
 
@@ -107,25 +113,72 @@ class _Backup(object):
                 sep = "["
                 for i in gen:
                     f.write(sep)
-                    f.write(i.to_json())
+                    j = i.to_json()
+                    assert json.loads(j)
+                    f.write(j)
                     sep = ","
+                if sep == "[":
+                    # Empty iteration
+                    f.write(sep)
                 f.write("]")
             _shell(["xz", base])
 
         try:
             _clone(".git")
+
             if repo.has_wiki:
                 try:
                     _clone(".wiki.git")
                 except subprocess.CalledProcessError as e:
                     if not re.search(_WIKI_ERROR_OK, str(e.output)):
                         raise
+            _json(_Iterator(repo.iter_comments()), ".comments")
 
             if repo.has_issues:
-                _json(repo.iter_issues(state="all"), ".issues")
-            _json(repo.iter_comments(), ".comments")
+                _json(_Iterator(repo.iter_issues(state="all")), ".issues")
         except:
-            sys.print_exc()
+            traceback.print_exc()
+
+class _Iterator(object):
+
+    def __init__(self, child):
+        self._child = child
+
+    def __iter__(self):
+        return self
+
+    def __next__(self):
+        i = self._child.next()
+        if type(i.to_json()) is dict:
+            return _Element(i)
+        return i
+
+class _Element(object):
+
+    def __init__(self, child):
+        self._child = child
+
+    def to_json(self):
+        res = json.dumps(self._child.to_json())
+        assert res[-1] == '}'
+        res = res[:-1]
+
+        def _json(x):
+            j = x.to_json()
+            if type(j) is str:
+                return j
+            return json.dumps(j)
+        for k in ['comments', 'events', 'labels']:
+            func = getattr(self._child, 'iter_' + k, None)
+            if func is None:
+                continue
+            v = ",".join(map(_json, func()))
+            res += ',"' + k + '":[' + v + ']'
+        res += '}'
+
+        return res
+
+        
 
 def _shell(cmd):
     subprocess.check_output(cmd, stderr=subprocess.STDOUT)
