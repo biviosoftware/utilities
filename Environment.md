@@ -23,8 +23,8 @@ alias gco='git commit -am'
 test "$VIRTUAL_ENV" && {
     type workon >/dev/null 2>&1 || {
         unset VIRTUAL_ENV
-	export VIRTUAL_ENV
-	reset_ps1
+	    export VIRTUAL_ENV
+	    reset_ps1
     }
 }
 export WORKON_HOME=~/Envs
