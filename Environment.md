@@ -1,3 +1,27 @@
+Installing Python3
+---
+
+As root:
+
+`yum install git gcc zlib-devel bzip2-devel readline-devel sqlite-devel openssl-devel`
+
+As user:
+```bash
+curl -L https://raw.github.com/yyuu/pyenv-installer/master/bin/pyenv-installer | bash
+export PATH="$HOME/.pyenv/bin:$PATH"
+eval "$(pyenv init -)"
+eval "$(pyenv virtualenv-init -)"
+pyenv install 3.4.1
+pyenv global 3.4.1
+pip install virtualenvwrapper
+git clone https://github.com/yyuu/pyenv-virtualenvwrapper.git ~/.pyenv/plugins/pyenv-virtualenvwrapper
+export PYENV_VIRTUALENVWRAPPER_PREFER_PYVENV=true
+mkvirtualenv py3
+workon py3
+```
+
+Add this to your ~/.bashrc:
+
 ```bash
 function reset_ps1 {
     export PS1='\W$ '
@@ -18,19 +42,18 @@ eval "$(pyenv init -)"
 eval "$(pyenv virtualenv-init -)"
 pyenv virtualenvwrapper
 workon py3
+```
 
-cat > /dev/null <<'__END__'
-# http://fgimian.github.io/blog/2014/04/20/better-python-version-and-environment-management-with-pyenv/
-# yum install git gcc zlib-devel bzip2-devel readline-devel sqlite-devel openssl-devel
-curl -L https://raw.github.com/yyuu/pyenv-installer/master/bin/pyenv-installer | bash
-export PATH="$HOME/.pyenv/bin:$PATH"
-eval "$(pyenv init -)"
-eval "$(pyenv virtualenv-init -)"
-pyenv install 3.4.1
-pyenv global 3.4.1
-pip install virtualenvwrapper
-git clone https://github.com/yyuu/pyenv-virtualenvwrapper.git ~/.pyenv/plugins/pyenv-virtualenvwrapper
-export PYENV_VIRTUALENVWRAPPER_PREFER_PYVENV=true
-mkvirtualenv py3
-__END__
+These are useful github aliases:
+
+```bash
+function gcl {
+    local r=$1
+    expr "$r" : '.*/' >/dev/null || r=$(basename $(pwd))/$r
+    git clone "https://github.com/$r"
+}
+
+alias gup='git fetch && git checkout'
+alias gpu='git push origin master'
+alias gco='git commit -am'
 ```
