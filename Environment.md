@@ -7,7 +7,7 @@ As root:
 
 As user:
 ```bash
-curl -L https://raw.github.com/yyuu/pyenv-installer/master/bin/pyenv-installer | bash
+curl -L https://raw.githubusercontent.com/yyuu/pyenv-installer/master/bin/pyenv-installer | bash
 export PATH="$HOME/.pyenv/bin:$PATH"
 eval "$(pyenv init -)"
 eval "$(pyenv virtualenv-init -)"
