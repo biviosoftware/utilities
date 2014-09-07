@@ -57,3 +57,17 @@ alias gup='git fetch && git checkout'
 alias gpu='git push origin master'
 alias gco='git commit -am'
 ```
+
+###### Postgresql database
+
+A postgresql server must be running with the utf8 character
+encoding and UTC timezone.  Run this as root:
+
+```
+service postgresql stop
+rm -rf /var/lib/pgsql/data
+su - postgres -c 'initdb -E UTF8'
+perl -pi.bak -e '/^host/ && s/trust$/password/' /var/lib/pgsql/data/pg_hba.conf
+perl -pi.bak -e 's/^#timezone\b.*/timezone = UTC/' /var/lib/pgsql/data/postgresql.conf
+service postgresql start
+```
