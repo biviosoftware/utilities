@@ -24,7 +24,7 @@ Add this to your ~/.bashrc:
 
 ```bash
 function reset_ps1 {
-    export PS1='\W$ '
+    export PS1='`whoami` \W$ '
 }
 expr "x$PS1" : 'x\[' > /dev/null && reset_ps1
 
