@@ -58,6 +58,25 @@ alias gpu='git push origin master'
 alias gco='git commit -am'
 ```
 
+ssh key needed for CoreOS fleet:
+
+```bash
+if test -f ~/.ssh/ssh_agent; then
+    . ~/.ssh/ssh_agent > /dev/null
+    if [ "$PS1" ]; then
+        if ps ${SSH_AGENT_PID-0} 2>&1 | grep ssh-agent > /dev/null 2>&1; then
+            : We have a daemon
+        else
+            # Start a daemon and add
+            ssh-agent > ~/.ssh/ssh_agent
+            . ~/.ssh/ssh_agent
+            ssh-add
+            (x=~/.vagrant.d/insecure_private_key && test -f $x && ssh-add $x)
+        fi
+    fi
+fi
+```
+
 ###### Postgresql database
 
 A postgresql server must be running with the utf8 character
