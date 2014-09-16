@@ -3,7 +3,7 @@ Installing Python3
 
 As root:
 
-`yum install git gcc zlib-devel bzip2-devel readline-devel sqlite-devel openssl-devel`
+`yum install git gcc zlib-devel bzip2-devel readline-devel sqlite-devel openssl-devel postgresql-devel`
 
 As user:
 ```bash
