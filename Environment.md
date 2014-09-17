@@ -23,6 +23,8 @@ workon py3
 Add this to your ~/.bashrc:
 
 ```bash
+cd
+cat >> .bashrc <<'EOF'
 function reset_ps1 {
     export PS1='\W$ '
 }
@@ -35,13 +37,14 @@ test "$VIRTUAL_ENV" && {
 	    reset_ps1
     }
 }
-export WORKON_HOME=~/Envs
+export WORKON_HOME="$HOME/Envs"
 export PYENV_VIRTUALENVWRAPPER_PREFER_PYVENV=true
 export PATH="$HOME/.pyenv/bin:$PATH"
 eval "$(pyenv init -)"
 eval "$(pyenv virtualenv-init -)"
 pyenv virtualenvwrapper
 workon py3
+EOF
 ```
 
 These are useful github aliases:
@@ -89,4 +92,33 @@ su - postgres -c 'initdb -E UTF8'
 perl -pi.bak -e '/^host/ && s/trust$/password/' /var/lib/pgsql/data/pg_hba.conf
 perl -pi.bak -e 's/^#timezone\b.*/timezone = UTC/' /var/lib/pgsql/data/postgresql.conf
 service postgresql start
+echo "ALTER USER postgres PASSWORD 'postpass';COMMIT" | su - postgres -c 'psql template1'
+```
+
+In your bashrc
+```
+echo 'export PGPASSWORD=postpass' >> ~/.bashrc
+```
+
+
+###### Docker
+
+```bash
+rpm -Uvh http://mirror.us.leaseweb.net/epel/6/i386/epel-release-6-8.noarch.rpm
+# This may fail
+yum remove docker
+yum install -y docker-io
+service docker start
+chkconfig docker on
+docker pull centos
+# Test interactive (-i -t)
+docker run -i -t centos:centos6 /bin/bash
+# Test daemon (-d)
+cid=$(docker run -d centos:centos6 /bin/sleep 3600)
+docker ps -a
+# Displays stdout
+docker logs $cid
+docker stop $cid
+# You have to remove the containers, or they'll hang around forever
+docker rm $cid
 ```
