@@ -103,7 +103,10 @@ echo 'export PGPASSWORD=postpass' >> ~/.bashrc
 
 ###### Docker
 
+(Command line doc manuals)[https://docs.docker.com/reference/commandline/cli/]
+
 ```bash
+
 rpm -Uvh http://mirror.us.leaseweb.net/epel/6/i386/epel-release-6-8.noarch.rpm
 # This may fail
 yum remove docker
@@ -111,7 +114,7 @@ yum install -y docker-io
 service docker start
 chkconfig docker on
 docker pull centos
-# Test interactive (-i -t)
+# Test interactive (--interacive=true -tty=true)
 docker run -i -t centos:centos6 /bin/bash
 # Test daemon (-d)
 cid=$(docker run -d centos:centos6 /bin/sleep 3600)
@@ -121,4 +124,13 @@ docker logs $cid
 docker stop $cid
 # You have to remove the containers, or they'll hang around forever
 docker rm $cid
+# --quite=true only shows numeric ideas for images and ps
+# Remove all running containers: --quiet=true  --all=true
+docker rm $(docker ps -a -q)
+
+# List all images --all=true (including intermediate/old commits)
+docker images -a
+
+# Clean old commits: --filter
+docker rmi $(docker images -f "dangling=true" -q)
 ```
