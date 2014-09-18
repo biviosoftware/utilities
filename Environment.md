@@ -107,7 +107,7 @@ echo 'export PGPASSWORD=postpass' >> ~/.bashrc
 
 ```bash
 
-rpm -Uvh http://mirror.us.leaseweb.net/epel/6/i386/epel-release-6-8.noarch.rpm
+sudo rpm -Uvh http://mirror.us.leaseweb.net/epel/6/i386/epel-release-6-8.noarch.rpm
 # This may fail
 yum remove docker
 yum install -y docker-io
