@@ -105,6 +105,8 @@ echo 'export PGPASSWORD=postpass' >> ~/.bashrc
 
 (Command line doc manuals)[https://docs.docker.com/reference/commandline/cli/]
 
+As root:
+
 ```bash
 
 rpm -Uvh http://mirror.us.leaseweb.net/epel/6/i386/epel-release-6-8.noarch.rpm
