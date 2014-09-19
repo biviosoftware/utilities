@@ -118,6 +118,7 @@ echo 'export PGPASSWORD=postpass' >> ~/.bashrc
 Warning: ctrl-P is an escape character in interactive Docker shells so to
 get a single ^P you need to type it twice.  No way to override.
 
+As root:
 
 ```bash
 
