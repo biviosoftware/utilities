@@ -3,7 +3,17 @@ Installing Python3
 
 As root:
 
-`yum install git gcc zlib-devel bzip2-devel readline-devel sqlite-devel openssl-devel postgresql-devel`
+```
+yum install -y \
+	git \
+	gcc \
+	zlib-devel \
+	bzip2-devel \
+	readline-devel \
+	sqlite-devel \
+	openssl-devel \
+	postgresql-devel
+```
 
 As user:
 ```bash
@@ -105,6 +115,10 @@ echo 'export PGPASSWORD=postpass' >> ~/.bashrc
 
 (Command line doc manuals)[https://docs.docker.com/reference/commandline/cli/]
 
+Warning: ctrl-P is an escape character in interactive Docker shells so to
+get a single ^P you need to type it twice.  No way to override.
+
+
 ```bash
 
 rpm -Uvh http://mirror.us.leaseweb.net/epel/6/i386/epel-release-6-8.noarch.rpm
@@ -125,8 +139,8 @@ docker stop $cid
 # You have to remove the containers, or they'll hang around forever
 docker rm $cid
 # --quite=true only shows numeric ideas for images and ps
-# Remove all running containers: --quiet=true  --all=true
-docker rm $(docker ps -a -q)
+# Remove all containers: --quiet=true  --all=true
+docker rm -f $(docker ps -a -q)
 
 # List all images --all=true (including intermediate/old commits)
 docker images -a
