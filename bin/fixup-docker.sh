@@ -11,4 +11,4 @@ export HOSTNAME=docker
 export PROMPT_COMMAND=
 export PS1='[docker \W]\$ '
 EOF
-. /.bashrc
+
