@@ -1,5 +1,5 @@
 #!/bin/sh
-set -ex
+set -e
 cp -a /etc/skel/.??* /root
 cat > /.bashrc << 'EOF'
 export HOME=/root
