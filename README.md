@@ -4,4 +4,4 @@ Bivio Software Utilities
 
 github backup and restore
 
-Checkout [[https://github.com/biviosoftware/utilities/wiki]]
+(Checkout the Wiki)[https://github.com/biviosoftware/utilities/wiki]
