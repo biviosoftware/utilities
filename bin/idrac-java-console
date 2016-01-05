@@ -17,8 +17,8 @@ As of this writing, the version is 2.15.10.10.
 You must setup your ~/.ssh/config as follows::
 
     Host proxy-host.bivio.biz
-        LocalForward 2033 192.168.1.233:443
-        LocalForward 5933 192.168.1.233:5900
+        LocalForward 2001 192.168.1.233:443
+        LocalForward 5901 192.168.1.233:5900
 
 It's the second LocalForward that is needed for the console, but the
 first is needed to access the iDRAC web interface, which provides the
@@ -29,15 +29,15 @@ mouse in System Preferences > Security & Privacy > Privacy > Accessibility.
 If you don't, it'll still work. It also assumes there's a binding to
 ``*.jnlp`` files to ``Java Web Start.app``.
 
-You must set ``$IDRAC_CONSOLE_PASSWORD`` to whatever your root password
+You must set ``$RA_PASSWORD`` to whatever your root password
 is. We'll use the above example::
 
-    idrac-java-console 33
+    idrac-java-console 1
 
-This will open ports localhost:2033 and localhost:5933 to connect to
-that slot
+This will open ports localhost:2001 and localhost:5901 to connect to
+that slot.
 
-:copyright: Copyright (c) 2015 Bivio Software, Inc.  All Rights Reserved.
+:copyright: Copyright (c) 2015-2016 Bivio Software, Inc.  All Rights Reserved.
 :license: http://www.apache.org/licenses/LICENSE-2.0.html
 """
 from __future__ import absolute_import, division, print_function
@@ -123,7 +123,7 @@ template = '''<?xml version="1.0" encoding="UTF-8"?>
 
 args = {
     'port': '{:0>2d}'.format(int(sys.argv[1])),
-    'passwd': os.environ['IDRAC_CONSOLE_PASSWORD'],
+    'passwd': os.environ['RA_PASSWORD'],
 }
 filename = '/tmp/idrac-java-console.jnlp'
 open(filename, 'w').write(template.format(**args))
