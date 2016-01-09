@@ -51,6 +51,6 @@ ra_raid_jbod() {
 
 ra_boot_settings() {
     ra_all 'set BIOS.BiosBootSettings.BootSeq HardDisk.List.1-1' \
-        'BIOS.BiosBootSettings.HddSeq RAID.Integrated.1-1' \
+        'set BIOS.BiosBootSettings.HddSeq RAID.Integrated.1-1' \
 	'job BIOS.Setup.1-1'
 }
