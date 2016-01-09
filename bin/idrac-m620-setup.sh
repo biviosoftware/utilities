@@ -42,7 +42,7 @@ ra_raid_jbod() {
     local p
     local cmds=()
     local c='raid createvd:RAID.Integrated.1-1 -rl r0 -wp wt -rp nra -ss 64k -pdkey:'
-    for p in $(ra "${RA_ALL_SLOTS[0]}" get pdisks); do
+    for p in $(ra "${RA_ALL_SLOTS[0]}" storage get pdisks | tr -d '\r\n'); do
         cmds+=( "$c$p" )
     done
     ra_all "${cmds[@]}" \
