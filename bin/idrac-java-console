@@ -25,9 +25,14 @@ first is needed to access the iDRAC web interface, which provides the
 jar files to JNLP. The ``20xx`` and ``59xx`` are hardwired in this program.
 
 This program assumes you have configured Java to take over the keyboard and
-mouse in System Preferences > Security & Privacy > Privacy > Accessibility.
-If you don't, it'll still work. It also assumes there's a binding to
-``*.jnlp`` files to ``Java Web Start.app``.
+mouse in (Mac) System Preferences > Security & Privacy > Privacy > Accessibility.
+If you don't, it'll still work, but you won't be able to type in the console.
+Also, if you lose the ability to type, reboot your Mac. This happened to me
+once.a
+
+It also assumes there's a binding to ``*.jnlp`` files to ``Java Web Start.app``.
+It uses "open" to launch javaws, because the Mac doesn't see /usr/bin/javaws
+as the same thing as /usr/bin/java. It's a handy thing binding jnlp anyway.
 
 You must set ``$RA_PASSWORD`` to whatever your root password
 is. We'll use the above example::
