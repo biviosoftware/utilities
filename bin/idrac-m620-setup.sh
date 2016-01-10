@@ -5,10 +5,15 @@ ra() {
     shift
     local ip=${RA_BASE_IP%.*}.$((${RA_BASE_IP##*.} + $slot))
     local cmd=( $@ )
+    local c=idracadm7
     if [[ ${cmd[0]} = job ]]; then
 	cmd=( jobqueue create "${cmd[1]}" -r pwrcycle -s TIME_NOW -e TIME_NA )
     fi
-    idracadm7 -r "$ip" -u root -p "$RA_PASSWORD" "${cmd[@]}" \
+    if [[ ${cmd[0]} = vmcli ]]; then
+        c=vmcli
+        cmd=( ${cmd[@]:1} )
+    fi
+    "$c" -r "$ip" -u root -p "$RA_PASSWORD" "${cmd[@]}" \
         | egrep -v '^(Security Alert: Certificate|Continuing execution. Use -S)'
 }
 
@@ -53,4 +58,10 @@ ra_boot_settings() {
     ra_all 'set BIOS.BiosBootSettings.BootSeq HardDisk.List.1-1' \
         'set BIOS.BiosBootSettings.HddSeq RAID.Integrated.1-1' \
 	'job BIOS.Setup.1-1'
+}
+
+ra_vmcli() {
+    local slot=$1
+    local iso=$2
+    ra "$slot" vmcli -c "$iso" > /dev/null &
 }
