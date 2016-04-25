@@ -34,7 +34,7 @@ It also assumes there's a binding to ``*.jnlp`` files to ``Java Web Start.app``.
 It uses "open" to launch javaws, because the Mac doesn't see /usr/bin/javaws
 as the same thing as /usr/bin/java. It's a handy thing binding jnlp anyway.
 
-You must set ``$RA_PASSWORD`` to whatever your root password
+You must set ``$IDRAC_PASSWORD`` to whatever your root password
 is. We'll use the above example::
 
     idrac-java-console 1
@@ -128,7 +128,7 @@ template = '''<?xml version="1.0" encoding="UTF-8"?>
 
 args = {
     'port': '{:0>2d}'.format(int(sys.argv[1])),
-    'passwd': os.environ['RA_PASSWORD'],
+    'passwd': os.environ['IDRAC_PASSWORD'],
 }
 filename = '/tmp/idrac-java-console.jnlp'
 open(filename, 'w').write(template.format(**args))
