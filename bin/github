@@ -33,7 +33,7 @@ def restore(git_txz : 'git.txz file'):
     if not m:
         raise ValueError(git_txz, ': does not end in .git.txz')
     d = m.group(2)
-    _p('restore: ' + d)
+    _debug('restore: ' + d)
     g = m.group(1)
     os.mkdir(d)
     os.chdir(d)
@@ -49,7 +49,7 @@ def backup():
         _Backup()
     except subprocess.CalledProcessError as e:
         if hasattr(e, 'output'):
-            _p(str(e.output))
+            _p('ERROR: Backup {}'.format(e.output))
 
 class _Backup(object):
     def __init__(self):
@@ -76,7 +76,7 @@ class _Backup(object):
         except:
             pass
         os.chdir(d)
-        _p("directory: " + d)
+        _debug("directory: " + d)
         self._dir = d
 
     def _login(self):
@@ -96,9 +96,9 @@ class _Backup(object):
     def _repo(self, repo):
         fn = repo.full_name
         if _EXCLUDE and _EXCLUDE.search(fn):
-            _p('exclude: ' + fn)
+            _debug('exclude: ' + fn)
             return
-        _p("backup: " + fn)
+        _debug("backup: " + fn)
         bd = re.sub("/", "-", fn)
 
         def _clone(suffix):
@@ -142,7 +142,7 @@ class _Backup(object):
                 _json(_Iterator(repo.iter_issues(state="all")), ".issues")
         except Exception as e:
             if hasattr(e, 'output'):
-                _p(str(e.output))
+                _p('ERROR: {} {}'.format(fn, e.output))
             traceback.print_exc()
 
 class _Iterator(object):
@@ -185,6 +185,10 @@ class _Element(object):
         return res
 
 
+
+def _debug(msg):
+    pass
+    #_p(msg)
 
 def _p(msg):
     print(msg)
