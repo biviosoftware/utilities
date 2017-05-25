@@ -12,6 +12,7 @@ import os.path
 import re
 import subprocess
 import sys
+import time
 import traceback
 
 _BACKUP_DIR = "~/bkp"
@@ -61,7 +62,12 @@ class _Backup(object):
             self._repo(self._github.repository('biviosoftware', 'utilities'))
             return
 
+        sleep = 0
         for r in self._github.iter_repos(type="all"):
+            if sleep:
+                time.sleep(sleep)
+            else:
+                sleep = 120
             self._repo(r)
 
         self._purge()
