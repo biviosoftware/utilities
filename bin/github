@@ -67,7 +67,7 @@ class _Backup(object):
             if sleep:
                 time.sleep(sleep)
             else:
-                sleep = 60
+                sleep = 20
             self._repo(r)
 
         self._purge()
