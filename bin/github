@@ -44,6 +44,7 @@ def restore(git_txz : 'git.txz file'):
     _shell(['git', 'config', 'core.logallrefupdates', 'true'])
     _shell(['git', 'checkout'])
 
+
 def backup():
     'Backs up all github repositories associated with user'
     try:
@@ -51,6 +52,8 @@ def backup():
     except subprocess.CalledProcessError as e:
         if hasattr(e, 'output'):
             _p('ERROR: Backup {}'.format(e.output))
+    _p('SUCCESS')
+
 
 class _Backup(object):
     def __init__(self):
@@ -196,13 +199,16 @@ def _debug(msg):
     pass
     #_p(msg)
 
+
 def _p(msg):
     print(msg)
     sys.stdout.flush()
 
 
+
 def _shell(cmd):
     subprocess.check_output(cmd, stderr=subprocess.STDOUT)
+
 
 if __name__ == '__main__':
     argh.dispatch_commands([backup, restore])
